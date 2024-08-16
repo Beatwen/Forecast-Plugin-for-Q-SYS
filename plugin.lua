@@ -9,7 +9,7 @@ function GetColor(props)
 end
 
 function GetPrettyName(props) --The name that will initially display when dragged into a design
-  return "Forecast Plugin " .. PluginInfo.Version
+  return "Forecast Weather Plugin " .. PluginInfo.Version
 end
 
 function GetProperties()

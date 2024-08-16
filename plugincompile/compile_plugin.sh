@@ -68,15 +68,9 @@ then
   sed -i -E "s/$oldid/$newid/" info.lua
 fi
 
-# # STEP 3 Fix up line endings (this step is optional)
-# if command -v unix2dos > /dev/null; then
-#   unix2dos -q info.lua
-# else
-#   echo "unix2dos not found, skipping line ending conversion"
-# fi
+PLUGCC.exe ForecastWeatherPlugin plugin.lua
 
-PLUGCC.exe ForecastPlugin plugin.lua
-# Vérifiez si la commande de compilation a réussi
+
 if [ $? -eq 0 ]; then
   echo "Plugin compiled successfully to ./output_directory/plugin_name.qplug"
 else
