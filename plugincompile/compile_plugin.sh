@@ -68,7 +68,7 @@ then
   sed -i -E "s/$oldid/$newid/" info.lua
 fi
 
-PLUGCC.exe ForecastWeatherPlugin plugin.lua
+PLUGCC.exe WeatherForecastPlugin plugin.lua
 
 
 if [ $? -eq 0 ]; then

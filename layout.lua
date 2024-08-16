@@ -1,7 +1,7 @@
 -- Text display
 table.insert(graphics, {
   Type = "Header",
-  Text = "Forecast",
+  Text = "Weather Forecast",
   Position = {5, 5},
   Size = {295, 16},
   FontSize = 14,

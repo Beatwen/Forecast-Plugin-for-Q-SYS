@@ -1,4 +1,4 @@
--- HTTPClient Forecast Weather Plugin
+-- HTTPClient Weather Forecast Plugin
 -- by Christophe Bouserez
 -- August 2024
 
@@ -9,7 +9,7 @@ function GetColor(props)
 end
 
 function GetPrettyName(props) --The name that will initially display when dragged into a design
-  return "Forecast Weather Plugin " .. PluginInfo.Version
+  return "Weather Forecast Plugin " .. PluginInfo.Version
 end
 
 function GetProperties()
