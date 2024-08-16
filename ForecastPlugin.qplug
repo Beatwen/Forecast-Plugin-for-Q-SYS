@@ -1,0 +1,419 @@
+-- HTTPClient Forecast Plugin
+-- by Christophe Bouserez
+-- August 2024
+
+PluginInfo = {
+  Name = "Forecast Plugin",
+  Version = "1.0.0",
+  BuildVersion = "0.0.0.31",
+  Id = "",
+  Author = "Christophe Bouserez",
+  Description = "This is a forecast plugin. It should be used with OpenWeatherMap API. Please make a free account and get an api key from them to use this plugin. A pinout with the temperature and another pinout called Icon can be wired to a Custom Control component with a Text Display in it. Grab the text display and put it on your UCI. Change the property of that text display to media display. The weather Icon should appear.",
+}
+
+function GetColor(props)
+  return { 102, 102, 102 }
+end
+
+function GetPrettyName(props) --The name that will initially display when dragged into a design
+  return "Forecast Plugin " .. PluginInfo.Version
+end
+
+function GetProperties()
+  local props = {}
+  table.insert(props, {
+    Name = "Debug Print",
+    Type = "enum",
+    Choices = {"None", "Tx/Rx", "Tx", "Rx", "Function Calls", "All"},
+    Value = "None"
+  })
+  return props
+end
+
+function RectifyProperties(props)
+  if props.plugin_show_debug.Value == false then 
+    props["Debug Print"].IsHidden = true 
+  end
+  return props
+end
+
+function GetControls(props)
+  local ctrls = {}
+  table.insert(ctrls, {
+    Name = "APIKey",
+    ControlType = "Text",
+    IndicatorType = "Status",
+    Count = 1,
+    UserPin = true,
+    PinStyle = "Input"
+  })
+  table.insert(ctrls, {
+    Name = "Status",
+    ControlType = "Indicator",
+    IndicatorType = "Status",
+    PinStyle = "Output",
+    UserPin = true,
+    Count = 1
+  })
+  table.insert(ctrls, {
+    Name = "CityName",
+    ControlType = "Text",
+    IndicatorType = "Status",
+    Count = 1,
+    UserPin = true,
+    PinStyle = "Output"
+  })
+  
+  table.insert(ctrls, {
+    Name = "SendGet",
+    ControlType = "Button",
+    ButtonType = "Trigger",
+    Count = 1,
+    UserPin = true,
+    PinStyle = "Input"
+  })
+  table.insert(ctrls, {
+    Name = "SendPut",
+    ControlType = "Button",
+    ButtonType = "Momentary",
+    Count = 1,
+    UserPin = true,
+    PinStyle = "Input"
+  })
+  table.insert(ctrls, {
+    Name = "SendPost",
+    ControlType = "Button",
+    ButtonType = "Momentary",
+    Count = 1,
+    UserPin = true,
+    PinStyle = "Input"
+  })
+  table.insert(ctrls, {
+    Name = "LatLon",
+    ControlType = "Text",
+    IndicatorType = "Status",
+    Count = 1,
+    UserPin = true,
+    PinStyle = "Output"
+  })
+  table.insert(ctrls, {
+    Name = "ResponseText",
+    ControlType = "Text",
+    IndicatorType = "Status",
+    Count = 1,
+    UserPin = true,
+    PinStyle = "Output"
+  })
+  table.insert(ctrls, {
+    Name = "ResponseText2",
+    ControlType = "Text",
+    IndicatorType = "Status",
+    Count = 1,
+    UserPin = true,
+    PinStyle = "Output"
+  })
+  table.insert(ctrls, {
+    Name = "ResponseText3",
+    ControlType = "Text",
+    IndicatorType = "Status",
+    Count = 1,
+    UserPin = true,
+    PinStyle = "Output"
+  })
+  table.insert(ctrls, {
+    Name = "ResponseText4",
+    ControlType = "Text",
+    IndicatorType = "Status",
+    Count = 1,
+    UserPin = true,
+    PinStyle = "Output"
+  })
+  return ctrls
+end
+
+function GetControlLayout(props)
+  local layout   = {}
+  local graphics = {}
+  -- Text display
+  table.insert(graphics, {
+    Type = "Header",
+    Text = "Forecast",
+    Position = {5, 5},
+    Size = {295, 16},
+    FontSize = 14,
+    HTextAlign = "Center"
+  })
+  table.insert(graphics, {
+    Type = "Text",
+    Text = "Get Lat.&Lon.",
+    Position = {140, 25},
+    Size = {95, 45},
+    FontSize = 14,
+    HTextAlign = "Center"
+  })
+  -- table.insert(graphics, {
+  --   Type = "Text",
+  --   Text = "Send POST",
+  --   Position = {5, 45},
+  --   Size = {95, 16},
+  --   FontSize = 14,
+  --   HTextAlign = "Right"
+  -- })
+  -- table.insert(graphics, {
+  --   Type = "Text",
+  --   Text = "Send PUT",
+  --   Position = {5, 65},
+  --   Size = {95, 16},
+  --   FontSize = 14,
+  --   HTextAlign = "Right"
+  -- })
+  table.insert(graphics, {
+    Type = "Text",
+    Text = "Status",
+    Position = {5, 85},
+    Size = {95, 16},
+    FontSize = 14,
+    HTextAlign = "Right"
+  })
+  table.insert(graphics, {
+    Type = "Text",
+    Text = "Response",
+    Position = {5, 105},
+    Size = {95, 16},
+    FontSize = 14,
+    HTextAlign = "Right"
+  })
+  table.insert(graphics, {
+    Type = "Text",
+    Text = "City Name",
+    Position = {5, 25},
+    Size = {95, 16},
+    FontSize = 14,
+    HTextAlign = "Center"
+  })
+  table.insert(graphics, {
+    Type = "Text",
+    Text = "OpenWeatherMap API key",
+    Position = {260, 25},
+    Size = {200, 16},
+    FontSize = 14,
+    HTextAlign = "Center"
+  })
+  
+  --Controls
+  layout["APIKey"] = {
+    PrettyName = "Api Key",
+    Legend = "API Key",
+    FontSize = 12,
+    Style = "Text",
+    Position = {260, 55},
+    Size = {200, 16}
+  }
+  layout["CityName"] = {
+    PrettyName = "City name",
+    Legend = "City",
+    FontSize = 12,
+    Style = "Text",
+    Position = {5, 55},
+    Size = {95, 16}
+  }
+  layout["SendGet"] = {
+    PrettyName = "Get Lat and Lon",
+    Legend = "Send",
+    FontSize = 12,
+    Style = "Button",
+    Position = {140, 55},
+    Size = {95, 16}
+  }
+  layout["LatLon"] = {
+    PrettyName = "Lat and Lon",
+    Legend = "Send information",
+    FontSize = 12,
+    Style = "Text",
+    Position = {105, 105},
+    Size = {200, 20}
+  }
+  layout["Status"] = {
+    PrettyName = "Connection Status", 
+    Position = {105, 85}, 
+    Size = {200, 16}
+  }
+  layout["ResponseText"] = {
+    PrettyName = "Weather",
+    Position = {105, 130}, 
+    Style = "Text",
+    Size = {200, 20},
+    HTextAlign = "Left"
+  }
+  layout["ResponseText2"] = {
+    PrettyName = "Icon",
+    Position = {105, 155}, 
+    Style = "Text",
+    Size = {200, 20},
+    HTextAlign = "Left"
+  }
+  layout["ResponseText3"] = {
+    PrettyName = "Temp",
+    Position = {105, 180}, 
+    Style = "Text",
+    Size = {200, 20},
+    HTextAlign = "Left"
+  }
+  layout["ResponseText4"] = {
+    PrettyName = "Icon Code",
+    Position = {105, 205}, 
+    Style = "Text",
+    Size = {200, 20},
+    HTextAlign = "Left"
+  }
+  return layout, graphics
+end
+
+--Start event based logic
+if Controls then
+  json = require("json")
+  -- Aliases
+  Status = Controls.Status
+  SendGet = Controls.SendGet
+  SendPost = Controls.SendPost
+  SendPut = Controls.SendPut
+  ResponseText = Controls.ResponseText
+  ResponseText2 = Controls.ResponseText2
+  ResponseText3 = Controls.ResponseText3
+  ResponseText4 = Controls.ResponseText4
+  City = Controls.CityName
+  LatAndLon = Controls.LatLon
+  APIKey = Controls.APIKey
+  currentRequest = nil
+  pollingTimer = nil
+  isPollingActive = false
+  
+  -- Constants
+  StatusState = { OK = 0, COMPROMISED = 1, FAULT = 2, NOTPRESENT = 3, MISSING = 4, INITIALIZING = 5}  -- Status states in designer
+  
+    -- Variables
+    RequestTimeout = 10            -- Timeout of the connection in seconds
+    Host = "api.openweathermap.org"   -- HTTP server host name or IP address to use for connection 
+    lat = 10.99
+    lon = 44.34
+    Path = "put"   
+  
+  
+  
+  --Debug level
+  DebugTx,DebugRx,DebugFunction = false, false, false
+  DebugPrint = Properties["Debug Print"].Value
+  if DebugPrint=="Tx/Rx" then
+    DebugTx,DebugRx=true,true
+  elseif DebugPrint=="Tx" then
+    DebugTx=true
+  elseif DebugPrint=="Rx" then
+    DebugRx=true
+  elseif DebugPrint=="Function Calls" then
+    DebugFunction=true
+  elseif DebugPrint=="All" then
+    DebugTx,DebugRx,DebugFunction=true,true,true
+  end
+  
+  -- Functions
+  -- Function that sets plugin status
+  function ReportStatus(state, msg)
+    if DebugFunction then print("ReportStatus() called:" .. state) end
+    local msg = msg or ""
+    Status.Value = StatusState[state]  -- Sets status state
+    Status.String = msg  -- Sets status message
+  end
+  
+  -- Function reads response code, sets status and prints received data.
+  function ResponseHandler(tbl, code, data, err, headers)
+    if DebugFunction then print("HTTP Response Handler called") end
+    if DebugRx then print("HTTP Response Code: " .. code) end
+    if code == 200 then  -- Vaild response
+      ReportStatus("OK")
+      if DebugRx then print("Rx: ", data) end
+      parsedJson = json.decode(data)
+        if (currentRequest == "GetLatLon") then
+          if parsedJson and parsedJson[1] then
+            Lat = parsedJson[1].lat
+            Lon = parsedJson[1].lon
+            LatAndLon.String = string.format("Lat: %f, Lon: %f", Lat, Lon)
+            StartPolling(Lat,Lon)
+          end
+        else if (currentRequest == "GetWeather") then
+            if parsedJson then
+              weatherIcon = parsedJson.weather[1].icon
+              weatherMain = parsedJson.weather[1].main
+              weatherTemp = parsedJson.main.temp
+              weatherTempStr = tostring(weatherTemp)
+              weatherTempInt = tonumber(weatherTempStr:match("^-?%d+"))
+              --The line below can be used if we want to get the image from openweathermap, if you want other icons, feel free to change this
+              iconUrl = string.format("http://openweathermap.org/img/wn/%s@2x.png", weatherIcon)
+              ResponseText.String = string.format(data)
+              ResponseText2.String = string.format("{ 'Protocol': 'Image', 'URLs':['%s'], 'ImageTimeSeconds':1.0 }", iconUrl)
+              ResponseText3.String = weatherTempInt .. "°C"
+              ResponseText4.String = weatherIcon
+            end
+        end
+      end
+    elseif code == 401.0 then  -- Invalid Address handler
+      ReportStatus("MISSING", "Check TCP connection properties") 
+  
+    else   -- Other error cases
+      ReportStatus("FAULT", err) 
+    end
+  end
+  
+  -- Send an HTTP GET request to the defined getting Latitude and Longitude
+  function GetRequest()
+  
+    if DebugFunction then print("GetRequest() called") end
+    urlLatLon = string.format("http://api.openweathermap.org/geo/1.0/direct?q=%s&&limit=1&appid=%s", City.String, APIKey.String)
+    currentRequest = "GetLatLon"
+    if DebugTx then print("Sending GET request: " .. urlLatLon) end
+      HttpClient.Download({ 
+        Url          = urlLatLon,
+        Method       = "GET",
+        Headers      = headers,
+        User         = Username,  -- Seulement si nécessaire
+        Password     = Password,  -- Seulement si nécessaire
+        Timeout      = RequestTimeout,
+        EventHandler = ResponseHandler
+    })
+  end
+  
+  
+  function StartPolling(lat, lon)
+    isPollingActive = true
+    PollWeather()
+  end
+  
+  function PollWeather()
+    if Lat and Lon then
+      GetWeather(Lat, Lon)
+    else
+      print("Error: Latitude and Longitude not available.")
+    end
+    if isPollingActive then
+      Timer.CallAfter(PollWeather, 600) -- Polling every 10 minutes
+    end
+  end
+  function GetWeather(lat, lon)
+    currentRequest = "GetWeather"
+    url = string.format("http://api.openweathermap.org/data/2.5/weather?lat=%f&lon=%f&appid=%s&units=metric", lat, lon, APIKey.String)
+    -- Debugging
+    print("Get request called" .. currentRequest)
+  
+    if DebugTx then print("Sending GET request: " .. url) end
+    
+    -- Envoyer la requête GET
+    HttpClient.Download({ 
+        Url          = url,
+        Method       = "GET",
+        Headers      = headers,
+        Timeout      = RequestTimeout,
+        EventHandler = ResponseHandler
+    })
+  end
+  -- Control Event Handler Binding
+  SendGet.EventHandler = GetRequest  
+end
