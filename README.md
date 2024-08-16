@@ -2,12 +2,12 @@
 
 ## Overview
 
-The **Weather Forecast Plugin** is a custom Lua plugin designed for Q-SYS systems, created by Christophe Bouserez. This plugin interfaces with the OpenWeatherMap API to retrieve weather data, including temperature, weather conditions, and associated icons. The data can be displayed on UCIs (User Control Interfaces) using the Q-SYS Text Display component.
+The **Weather Forecast Plugin** is a custom Lua plugin designed for Q-SYS systems. This plugin interfaces with the OpenWeatherMap API to retrieve weather data, including temperature, weather conditions, and associated icons. The data can be displayed on UCIs (User Control Interfaces) using the Q-SYS Text Display Customs Controls component as Text Display then used as media display in your UCIs.
 
 ## Version Information
 
 - **Version:** 1.0.0
-- **Build Version:** 0.0.0.31
+- **Build Version:** 0.0.0.34
 - **Author:** Christophe Bouserez
 - **Date:** August 2024
 
@@ -38,7 +38,7 @@ The **Weather Forecast Plugin** is a custom Lua plugin designed for Q-SYS system
 5. **Display Weather Data:**
    - Connect `Weather` output pin will be used for raw weather data.
    - `Temp` output pin will display the temperature.
-   - `Icon Code` will display the weather icon code.
+   - `Icon Code` will display the weather icon code. This can be used to use your own weather icons.
 
 ## Controls and Properties
 
