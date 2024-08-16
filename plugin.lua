@@ -1,4 +1,4 @@
--- HTTPClient Forecast Plugin
+-- HTTPClient Forecast Weather Plugin
 -- by Christophe Bouserez
 -- August 2024
 

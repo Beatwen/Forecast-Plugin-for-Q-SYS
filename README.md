@@ -1,8 +1,8 @@
-# Forecast Plugin for Q-SYS
+# Forecast Weather Plugin for Q-SYS
 
 ## Overview
 
-The **Forecast Plugin** is a custom Lua plugin designed for Q-SYS systems, created by Christophe Bouserez. This plugin interfaces with the OpenWeatherMap API to retrieve weather data, including temperature, weather conditions, and associated icons. The data can be displayed on UCIs (User Control Interfaces) using the Q-SYS Text Display component.
+The **Forecast Weather Plugin** is a custom Lua plugin designed for Q-SYS systems, created by Christophe Bouserez. This plugin interfaces with the OpenWeatherMap API to retrieve weather data, including temperature, weather conditions, and associated icons. The data can be displayed on UCIs (User Control Interfaces) using the Q-SYS Text Display component.
 
 ## Version Information
 
@@ -25,7 +25,7 @@ The **Forecast Plugin** is a custom Lua plugin designed for Q-SYS systems, creat
 ## Setup Instructions
 
 1. **Obtain API Key:** Register and get your API key from [OpenWeatherMap](https://openweathermap.org/).
-2. **Add Plugin to Design:** Drag the "Forecast Plugin" into your Q-SYS design.
+2. **Add Plugin to Design:** Drag the "Forecast Weather Plugin" into your Q-SYS design.
 3. **Configure Controls:**
    - Input your API key in the `APIKey` field.
    - Enter the desired city name in the `CityName` control.
