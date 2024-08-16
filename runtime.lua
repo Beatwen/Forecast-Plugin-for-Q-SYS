@@ -94,7 +94,8 @@ end
 function GetRequest()
 
   if DebugFunction then print("GetRequest() called") end
-  urlLatLon = string.format("http://api.openweathermap.org/geo/1.0/direct?q=%s&&limit=1&appid=%s", City.String, APIKey.String)
+  cityName = string.gsub(City.String, " ", "%%20")
+  urlLatLon = string.format("http://api.openweathermap.org/geo/1.0/direct?q=%s&&limit=1&appid=%s", cityName, APIKey.String)
   currentRequest = "GetLatLon"
   if DebugTx then print("Sending GET request: " .. urlLatLon) end
     HttpClient.Download({ 

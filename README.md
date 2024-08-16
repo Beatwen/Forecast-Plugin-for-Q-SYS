@@ -25,7 +25,7 @@ The **Weather Forecast Plugin** is a custom Lua plugin designed for Q-SYS system
 ## Setup Instructions
 
 1. **Obtain API Key:** Register and get your API key from [OpenWeatherMap](https://openweathermap.org/).
-2. **Add Plugin to Design:** Drag the "Weather Forecast Plugin" into your Q-SYS design.
+2. **Add Plugin to Design:** Download the .qplug file in the repo then open it with Q-SYS Designer. Drag the "Weather Forecast Plugin" into your Q-SYS design.
 3. **Configure Controls:**
    - Input your API key in the `APIKey` field.
    - Enter the desired city name in the `CityName` control.
